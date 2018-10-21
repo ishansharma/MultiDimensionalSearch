@@ -1,5 +1,7 @@
-/** Starter code for LP3
- *  @author
+/**
+ * Starter code for LP3
+ *
+ * @author
  */
 
 // Change to your net id
@@ -23,12 +25,12 @@ public class MDS {
        Returns 1 if the item is new, and 0 otherwise.
     */
     public int insert(long id, Money price, java.util.List<Long> list) {
-	return 0;
+        return 0;
     }
 
     // b. Find(id): return price of item with given id (or 0, if not found).
     public Money find(long id) {
-	return new Money();
+        return new Money();
     }
 
     /* 
@@ -37,7 +39,7 @@ public class MDS {
        or 0, if such an id did not exist.
     */
     public long delete(long id) {
-	return 0;
+        return 0;
     }
 
     /* 
@@ -47,7 +49,7 @@ public class MDS {
        Return 0 if there is no such item.
     */
     public Money findMinPrice(long n) {
-	return new Money();
+        return new Money();
     }
 
     /* 
@@ -56,7 +58,7 @@ public class MDS {
        Return 0 if there is no such item.
     */
     public Money findMaxPrice(long n) {
-	return new Money();
+        return new Money();
     }
 
     /* 
@@ -65,7 +67,7 @@ public class MDS {
        their prices fall within the given range, [low, high].
     */
     public Money findPriceRange(long n, Money low, Money high) {
-	return new Money();
+        return new Money();
     }
 
     /* 
@@ -74,7 +76,7 @@ public class MDS {
        prices of items.  Returns the sum of the net increases of the prices.
     */
     public Money priceHike(long l, long h, double rate) {
-	return new Money();
+        return new Money();
     }
 
     /*
@@ -84,27 +86,54 @@ public class MDS {
       deleted from the description of id.  Return 0 if there is no such id.
     */
     public long removeNames(long id, java.util.List<Long> list) {
-	return 0;
+        return 0;
     }
-    
+
     // Do not modify the Money class in a way that breaks LP3Driver.java
-    public static class Money implements Comparable<Money> { 
-	long d;  int c;
-	public Money() { d = 0; c = 0; }
-	public Money(long d, int c) { this.d = d; this.c = c; }
-	public Money(String s) {
-	    String[] part = s.split("\\.");
-	    int len = part.length;
-	    if(len < 1) { d = 0; c = 0; }
-	    else if(part.length == 1) { d = Long.parseLong(s);  c = 0; }
-	    else { d = Long.parseLong(part[0]);  c = Integer.parseInt(part[1]); }
-	}
-	public long dollars() { return d; }
-	public int cents() { return c; }
-	public int compareTo(Money other) { // Complete this, if needed
-	    return 0;
-	}
-	public String toString() { return d + "." + c; }
+    public static class Money implements Comparable<Money> {
+        long d;
+        int c;
+
+        public Money() {
+            d = 0;
+            c = 0;
+        }
+
+        public Money(long d, int c) {
+            this.d = d;
+            this.c = c;
+        }
+
+        public Money(String s) {
+            String[] part = s.split("\\.");
+            int len = part.length;
+            if (len < 1) {
+                d = 0;
+                c = 0;
+            } else if (part.length == 1) {
+                d = Long.parseLong(s);
+                c = 0;
+            } else {
+                d = Long.parseLong(part[0]);
+                c = Integer.parseInt(part[1]);
+            }
+        }
+
+        public long dollars() {
+            return d;
+        }
+
+        public int cents() {
+            return c;
+        }
+
+        public int compareTo(Money other) { // Complete this, if needed
+            return 0;
+        }
+
+        public String toString() {
+            return d + "." + c;
+        }
     }
 
 }
