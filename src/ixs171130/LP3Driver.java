@@ -76,7 +76,7 @@ public class LP3Driver {
                     result = mds.findMaxPrice(in.nextLong()).dollars();
                     break;
                 case "FindPriceRange":
-                    result = mds.findPriceRange(in.nextLong(), new MDS.Money(in.next()), new MDS.Money(in.next())).dollars();
+                    result = mds.findPriceRange(in.nextLong(), new MDS.Money(in.next()), new MDS.Money(in.next()));
                     break;
                 case "PriceHike":
                     result = mds.priceHike(in.nextLong(), in.nextLong(), in.nextDouble()).dollars();
