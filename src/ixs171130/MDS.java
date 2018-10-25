@@ -9,11 +9,17 @@ package ixs171130;
 
 // If you want to create additional classes, place them in this file as subclasses of MDS
 
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class MDS {
     // Add fields of MDS here
+    Set<Product> idIndex;
 
     // Constructors
     public MDS() {
+        idIndex = new TreeSet<>();
     }
 
     /* Public methods of MDS. Do not change their signatures.
@@ -25,7 +31,13 @@ public class MDS {
        Returns 1 if the item is new, and 0 otherwise.
     */
     public int insert(long id, Money price, java.util.List<Long> list) {
-        return 0;
+        Product p = new Product(id, price, (LinkedList<Long>) list);
+        boolean res = idIndex.add(p);
+        if(res) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     // b. Find(id): return price of item with given id (or 0, if not found).
@@ -87,6 +99,40 @@ public class MDS {
     */
     public long removeNames(long id, java.util.List<Long> list) {
         return 0;
+    }
+
+    /**
+     * Class for products
+     */
+    public static class Product implements Comparable {
+        long id;
+        Money price;
+        LinkedList<Long> description;
+
+        /**
+         * Constructor for Products
+         *
+         * @param id ID of the product. We are assuming that this will be unique.
+         * @param price Money object containing the price
+         * @param description An array of long values, can be of arbitrary length
+         */
+        public Product(long id, Money price, LinkedList<Long> description) {
+            this.id = id;
+            this.price = price;
+            this.description = (LinkedList<Long>) description.clone();
+        }
+
+        /**
+         * For comparison, we compare by ID
+         *
+         * @param o Other product
+         * @return True if the IDs are equal, false otherwise
+         */
+        @Override
+        public int compareTo(Object o) {
+            Product p = (Product) o;
+            return Long.compare(this.id, p.id);
+        }
     }
 
     // Do not modify the Money class in a way that breaks LP3Driver.java
