@@ -66,8 +66,28 @@ public class MDS {
        long ints that are in the description of the item deleted,
        or 0, if such an id did not exist.
     */
+
+    /**
+     * Delete item from storage. Returns the sum of long ints that are in the description of the deleted item.
+     * Returns 0 if id doesn't exist
+     * @param id ID of item to delete
+     * @return Sum of long ints in the deleted item
+     */
     public long delete(long id) {
-        return 0;
+        Product p = idIndex.get(id);
+
+        if(p == null) {
+            return 0;
+        }
+
+        long sum = 0;
+        for (long num :
+                p.description) {
+            sum += num;
+        }
+
+        return sum;
+
     }
 
     /*
