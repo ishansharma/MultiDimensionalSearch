@@ -29,4 +29,18 @@ class MDSTest {
         assertEquals(0, store.insert(2, new MDS.Money(30, 20), l));
         assertEquals(new MDS.Money(30, 20), store.find(2));
     }
+
+    @Test
+    void find() {
+        MDS store = new MDS();
+        List<Long> l = new LinkedList<>();
+
+        l.add(100L);
+        l.add(200L);
+
+        assertEquals(1, store.insert(1, new MDS.Money(10, 20), l));
+
+        assertEquals(new MDS.Money(10, 20), store.find(1));
+        assertEquals(new MDS.Money(), store.find(2));  // this product does not exist
+    }
 }
