@@ -1,25 +1,20 @@
-/**
- * Starter code for LP3
- *
- * @author
- */
-
-// Change to your net id
 package ixs171130;
 
 // If you want to create additional classes, place them in this file as subclasses of MDS
 
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
+/**
+ * Class for Multi-Dimensional Search
+ */
 public class MDS {
-    // Add fields of MDS here
-    Set<Product> idIndex;
+    private Map<Long, Product> idIndex;
 
-    // Constructors
+    /**
+     * Default constructor. Just initializes the indices
+     */
     public MDS() {
-        idIndex = new TreeSet<>();
+        idIndex = new TreeMap<>();
     }
 
     /* Public methods of MDS. Do not change their signatures.
@@ -30,18 +25,39 @@ public class MDS {
        is null or empty, in which case, just the price is updated.
        Returns 1 if the item is new, and 0 otherwise.
     */
+
+    /**
+     * Insert a new item
+     * @param id ID of the item. If item with this id is not present, insert item. Else, replace the price and description.
+     * @param price Price for the object
+     * @param list Description - This is a list that needs to be case to LinkedList for insernal use
+     * @return 1 if ID is new. 0 if ID is old and has been updated
+     */
     public int insert(long id, Money price, java.util.List<Long> list) {
-        Product p = new Product(id, price, (LinkedList<Long>) list);
-        boolean res = idIndex.add(p);
-        if(res) {
-            return 1;
-        } else {
+        Product p;
+        if(idIndex.containsKey(id)) {
+            p = idIndex.get(id);
+            p.updatePriceAndDescription(price, (LinkedList<Long>) list);
             return 0;
+        } else {
+            p = new Product(id, price, (LinkedList<Long>) list);
+            idIndex.put(id, p);
+            return 1;
         }
     }
 
-    // b. Find(id): return price of item with given id (or 0, if not found).
+    /**
+     * Return price of item with given id. If not found, returns 0
+     * @param id ID to search for
+     * @return Money object which is either price of the object or 0
+     */
     public Money find(long id) {
+        Product p = idIndex.get(id);
+
+        if(p != null) {
+            return p.price;
+        }
+
         return new Money();
     }
 
@@ -105,7 +121,7 @@ public class MDS {
      * Class for products
      */
     public static class Product implements Comparable {
-        long id;
+        final long id;  // making it final because ID should never be changed
         Money price;
         LinkedList<Long> description;
 
@@ -120,6 +136,20 @@ public class MDS {
             this.id = id;
             this.price = price;
             this.description = (LinkedList<Long>) description.clone();
+        }
+
+        /**
+         * Update price and description of product
+         * If description is null or list of length 0, don't update
+         * @param price New price
+         * @param description New description
+         */
+        public void updatePriceAndDescription(Money price, LinkedList<Long> description) {
+            this.price = price;
+
+            if(description != null && description.size() > 0) {
+                this.description = (LinkedList<Long>) description.clone();
+            }
         }
 
         /**
@@ -173,8 +203,29 @@ public class MDS {
             return c;
         }
 
-        public int compareTo(Money other) { // Complete this, if needed
-            return 0;
+        @Override
+        public int compareTo(Money o) {
+            if(this.d == o.d) {
+                if(this.c == o.c) {
+                    return 0;
+                } else if(this.c < o.d) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            } else {
+                if(this.d > o.d) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            Money o = (Money) obj;
+            return this.d == o.d && this.c == o.c;
         }
 
         public String toString() {

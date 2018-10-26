@@ -27,5 +27,6 @@ class MDSTest {
         l.clear();
         l.add(340L);
         assertEquals(0, store.insert(2, new MDS.Money(30, 20), l));
+        assertEquals(new MDS.Money(30, 20), store.find(2));
     }
 }
