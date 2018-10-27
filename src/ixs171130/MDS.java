@@ -19,15 +19,6 @@ public class MDS {
         idIndex = new TreeMap<>();
     }
 
-    /* Public methods of MDS. Do not change their signatures.
-       __________________________________________________________________
-       a. Insert(id,price,list): insert a new item whose description is given
-       in the list.  If an entry with the same id already exists, then its
-       description and price are replaced by the new values, unless list
-       is null or empty, in which case, just the price is updated.
-       Returns 1 if the item is new, and 0 otherwise.
-    */
-
     /**
      * Insert a new item
      * @param id ID of the item. If item with this id is not present, insert item. Else, replace the price and description.
@@ -67,12 +58,6 @@ public class MDS {
         return new Money();
     }
 
-    /*
-       c. Delete(id): delete item from storage.  Returns the sum of the
-       long ints that are in the description of the item deleted,
-       or 0, if such an id did not exist.
-    */
-
     /**
      * Delete item from storage. Returns the sum of long ints that are in the description of the deleted item.
      * Returns 0 if id doesn't exist
@@ -97,13 +82,6 @@ public class MDS {
 
     }
 
-    /*
-       d. FindMinPrice(n): given a long int, find items whose description
-       contains that number (exact match with one of the long ints in the
-       item's description), and return lowest price of those items.
-       Return 0 if there is no such item.
-    */
-
     /**
      * Give a long int, find items whose description contains that number, return lowest price of those items
      * @param n ID to search for
@@ -118,12 +96,6 @@ public class MDS {
 
         return p.price;
     }
-
-    /*
-       e. FindMaxPrice(n): given a long int, find items whose description
-       contains that number, and return highest price of those items.
-       Return 0 if there is no such item.
-    */
 
     /**
      * Given a long int, find items whose description contains that number, return highest price of those items
@@ -140,12 +112,6 @@ public class MDS {
 
         return p.price;
     }
-
-    /*
-       f. FindPriceRange(n,low,high): given a long int n, find the number
-       of items whose description contains n, and in addition,
-       their prices fall within the given range, [low, high].
-    */
 
     /**
      * Find number of products containing a number (n) in the description and where range is between low and high
@@ -197,6 +163,18 @@ public class MDS {
         final long id;  // making it final because ID should never be changed
         Money price;
         HashSet<Long> description;
+        Money zeroMoney = new Money(0, 0);
+
+        /**
+         * Constructor with only ID
+         *
+         * @param id ID of the product
+         */
+        public Product(long id) {
+            this.id = id;
+            this.price = zeroMoney;
+            this.description = new HashSet<>();
+        }
 
         /**
          * Constructor without description list
