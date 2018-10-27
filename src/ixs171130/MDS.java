@@ -9,14 +9,13 @@ import java.util.*;
  */
 public class MDS {
     private Map<Long, Product> idIndex;
-    private Map<Long, TreeSet<Money>> descriptionIndex;
+    private DescriptionIndex descriptionIndex = new DescriptionIndex();
 
     /**
      * Default constructor. Just initializes the indices
      */
     public MDS() {
         idIndex = new TreeMap<>();
-        descriptionIndex = new HashMap<>();
     }
 
     /* Public methods of MDS. Do not change their signatures.
@@ -39,11 +38,15 @@ public class MDS {
         Product p;
         if(idIndex.containsKey(id)) {
             p = idIndex.get(id);
+            // TODO: Look for a more efficient approach here
+            descriptionIndex.delete(p);
             p.updatePriceAndDescription(price, list);
+            descriptionIndex.add(p);
             return 0;
         } else {
             p = new Product(id, price, list);
             idIndex.put(id, p);
+            descriptionIndex.add(p);
             return 1;
         }
     }
@@ -87,6 +90,7 @@ public class MDS {
                 p.description) {
             sum += num;
         }
+        descriptionIndex.delete(p);
 
         return sum;
 
@@ -151,6 +155,7 @@ public class MDS {
         for(Long n: list) {
             if(p.description.remove(n)) {
                 res += n;
+                descriptionIndex.deleteProductForAWord(p, n);
             }
         }
         return res;
@@ -203,6 +208,62 @@ public class MDS {
         public int compareTo(Object o) {
             Product p = (Product) o;
             return Long.compare(this.id, p.id);
+        }
+    }
+
+    /**
+     * Class to hold the description index
+     */
+    private static class DescriptionIndex {
+        private Map<Long, TreeSet<Product>> descriptionIndex;
+        private Comparator<Product> PriceComparator;
+        private TreeSet<Product> t;
+
+        public void DesciptionIndex() {
+            descriptionIndex = new HashMap<>();
+            PriceComparator = Comparator.comparing(o -> o.price);
+        }
+
+        /**
+         * Add a product with given description to our index
+         * @param p Product to add to the index
+         */
+        public void add(Product p) {
+            for(Long desc: p.description) {
+                t = descriptionIndex.get(desc);
+                if(t == null) {  // this we are seeing this description for the first time
+                    t = new TreeSet<>(PriceComparator);
+                    t.add(p);
+                    descriptionIndex.put(desc, t);
+                } else {
+                    t.add(p);
+                }
+            }
+        }
+
+        /**
+         * Remove the product from index
+         * @param p Product
+         */
+        public void delete(Product p) {
+            for(Long desc: p.description) {
+                t = descriptionIndex.get(desc);
+                if(t != null) {
+                    t.remove(p);
+                }
+            }
+        }
+
+        /**
+         * Remove the product from index for a specific word
+         * @param p Product to remove
+         * @param descriptionWord Word for which to remove
+         */
+        public void deleteProductForAWord(Product p, Long descriptionWord) {
+            t = descriptionIndex.get(descriptionWord);
+            if(t != null) {
+                t.remove(p);
+            }
         }
     }
 
