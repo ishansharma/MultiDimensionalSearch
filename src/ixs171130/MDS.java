@@ -355,7 +355,7 @@ public class MDS {
             if(this.d == o.d) {
                 if(this.c == o.c) {
                     return 0;
-                } else if(this.c < o.d) {
+                } else if(this.c < o.c) {
                     return -1;
                 } else {
                     return 1;
