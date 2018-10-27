@@ -9,12 +9,14 @@ import java.util.*;
  */
 public class MDS {
     private Map<Long, Product> idIndex;
+    private Map<Long, TreeSet<Money>> descriptionIndex;
 
     /**
      * Default constructor. Just initializes the indices
      */
     public MDS() {
         idIndex = new TreeMap<>();
+        descriptionIndex = new HashMap<>();
     }
 
     /* Public methods of MDS. Do not change their signatures.
@@ -30,17 +32,17 @@ public class MDS {
      * Insert a new item
      * @param id ID of the item. If item with this id is not present, insert item. Else, replace the price and description.
      * @param price Price for the object
-     * @param list Description - This is a list that needs to be case to LinkedList for insernal use
+     * @param list Description - This is a list that needs to be case to LinkedList for internal use
      * @return 1 if ID is new. 0 if ID is old and has been updated
      */
     public int insert(long id, Money price, java.util.List<Long> list) {
         Product p;
         if(idIndex.containsKey(id)) {
             p = idIndex.get(id);
-            p.updatePriceAndDescription(price, (LinkedList<Long>) list);
+            p.updatePriceAndDescription(price, list);
             return 0;
         } else {
-            p = new Product(id, price, (LinkedList<Long>) list);
+            p = new Product(id, price, list);
             idIndex.put(id, p);
             return 1;
         }
@@ -96,6 +98,12 @@ public class MDS {
        item's description), and return lowest price of those items.
        Return 0 if there is no such item.
     */
+
+    /**
+     * Give a long int, find items whose description contains that number, return lowest price of those items
+     * @param n ID to search for
+     * @return The minimum price of products
+     */
     public Money findMinPrice(long n) {
         return new Money();
     }
@@ -163,7 +171,7 @@ public class MDS {
          * @param price Money object containing the price
          * @param desc An array of long values, can be of arbitrary length
          */
-        public Product(long id, Money price, LinkedList<Long> desc) {
+        public Product(long id, Money price, List<Long> desc) {
             this.id = id;
             this.price = price;
             this.description = new HashSet<>();
@@ -176,7 +184,7 @@ public class MDS {
          * @param price New price
          * @param desc New description
          */
-        public void updatePriceAndDescription(Money price, LinkedList<Long> desc) {
+        public void updatePriceAndDescription(Money price, List<Long> desc) {
             this.price = price;
 
             if(desc != null && desc.size() > 0) {
