@@ -157,4 +157,54 @@ class MDSTest {
 
         assertEquals("0.0", store.findMaxPrice(1000).toString());
     }
+
+    @Test
+    void findPriceRange() {
+        l.add(100L);
+        l.add(200L);
+        l.add(300L);
+
+        MDS.Money lower, upper;
+        lower = new MDS.Money(0, 0);
+        upper = new MDS.Money(100, 0);
+
+        store.insert(1, new MDS.Money(0, 99), l);
+        assertEquals(1, store.findPriceRange(100, lower, upper));
+
+        l.add(400L);
+        store.insert(2, new MDS.Money(1, 99), l);
+        assertEquals(2, store.findPriceRange(100, lower, upper));
+
+        assertEquals(0, store.findPriceRange(500, lower, upper));
+
+        l.add(500L);
+        store.insert(3, new MDS.Money(2, 99), l);
+
+        assertEquals(1, store.findPriceRange(500, lower, upper));
+
+        l.remove(400L);
+        l.remove(300L);
+        store.insert(4, new MDS.Money(3, 99), l);
+
+        assertEquals(4, store.findPriceRange(100, lower, upper));
+        assertEquals(3, store.findPriceRange(300, lower, upper));
+
+        store.delete(1);
+        assertEquals(3, store.findPriceRange(100, lower, upper));
+        assertEquals(2, store.findPriceRange(300, lower, upper));
+
+        l.clear();
+        l.add(1000L);
+        l.add(2000L);
+        store.insert(5, new MDS.Money(5, 99), l);
+        assertEquals(1, store.findPriceRange(1000, lower, upper));
+
+        store.insert(6, new MDS.Money(199, 99), l);
+        assertEquals(1, store.findPriceRange(1000, lower, upper));
+
+        l.clear();
+        l.add(100L);
+        store.removeNames(2, l);
+        assertEquals(2, store.findPriceRange(100, lower, upper));
+    }
 }

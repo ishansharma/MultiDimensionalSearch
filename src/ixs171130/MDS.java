@@ -146,8 +146,17 @@ public class MDS {
        of items whose description contains n, and in addition,
        their prices fall within the given range, [low, high].
     */
+
+    /**
+     * Find number of products containing a number (n) in the description and where range is between low and high
+     *
+     * @param n    Description word to search for
+     * @param low  lower bound
+     * @param high upper bound
+     * @return Number of products
+     */
     public int findPriceRange(long n, Money low, Money high) {
-        return 0;
+        return descriptionIndex.findPriceRange(n, low, high);
     }
 
     /*
@@ -188,6 +197,18 @@ public class MDS {
         final long id;  // making it final because ID should never be changed
         Money price;
         HashSet<Long> description;
+
+        /**
+         * Constructor without description list
+         *
+         * @param id    ID of the product.
+         * @param price Money object containing the price
+         */
+        public Product(long id, Money price) {
+            this.id = id;
+            this.price = price;
+            this.description = new HashSet<>();
+        }
 
         /**
          * Constructor for Products
@@ -309,6 +330,56 @@ public class MDS {
             } else {
                 return t.first();
             }
+        }
+
+        /**
+         * Give a description word and lower and upper bound on price, find number of products between those prices
+         *
+         * @param desc Description word to search for
+         * @param low  lower bound on price
+         * @param high upper bound on price
+         * @return Number of products that have desc in their description and have price between low and high
+         */
+        public int findPriceRange(Long desc, Money low, Money high) {
+            t = descriptionIndex.get(desc);
+            if (t == null || t.size() == 0) {
+                return 0;
+            }
+
+            Product lowerProduct, upperProduct, lowerDummy, upperDummy;
+            boolean lowerInclusive = false, upperInclusive = false;
+            lowerDummy = new Product(0, low);
+            upperDummy = new Product(0, high);
+            lowerProduct = t.floor(lowerDummy);
+            upperProduct = t.ceiling(upperDummy);
+
+            // if there's no product smaller than given product, it's the smallest!
+            if (lowerProduct == null) {
+                lowerProduct = t.first();
+                lowerInclusive = true;
+            }
+
+            if (upperProduct == null) {
+                upperProduct = t.last();
+                upperInclusive = true;
+            }
+
+            if (lowerDummy.price.equals(lowerProduct.price)) {
+                lowerInclusive = true;
+            }
+
+            if (upperDummy.price.equals(upperProduct.price)) {
+                upperInclusive = true;
+            }
+
+            //
+            if (lowerProduct.equals(upperProduct)) {
+                return 1;
+            }
+
+            // TODO: Remove the extra variable creation after testing
+            NavigableSet<Product> s = t.subSet(lowerProduct, lowerInclusive, upperProduct, upperInclusive);
+            return s.size();
         }
     }
 
