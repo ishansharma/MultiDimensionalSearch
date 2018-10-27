@@ -59,4 +59,27 @@ class MDSTest {
         assertEquals(0L, store.delete(2));
         assertEquals(1100L, store.delete(1));
     }
+
+    @Test
+    void removeNames() {
+        l.add(475L);
+        l.add(475L);
+        l.add(210L);
+        l.add(125L);
+        l.add(600L);
+
+        List<Long> removeList = new LinkedList<>();
+        removeList.add(475L);
+        removeList.add(200L);
+        removeList.add(100L);
+
+        store.insert(1, new MDS.Money(10, 20), l);
+
+        assertEquals(0L, store.removeNames(2, removeList));
+        assertEquals(475L, store.removeNames(1, removeList));
+
+        store.insert(1, new MDS.Money(10, 50), l);
+        removeList.add(125L);
+        assertEquals(600L, store.removeNames(1, removeList));
+    }
 }

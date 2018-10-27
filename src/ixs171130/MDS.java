@@ -127,14 +127,25 @@ public class MDS {
         return new Money();
     }
 
-    /*
-      h. RemoveNames(id, list): Remove elements of list from the description of id.
-      It is possible that some of the items in the list are not in the
-      id's description.  Return the sum of the numbers that are actually
-      deleted from the description of id.  Return 0 if there is no such id.
-    */
+    /**
+     * Given an id and a list, remove the elements of list from product's description
+     * @param id ID of product
+     * @param list List of longs to remove
+     * @return Sum of longs removed
+     */
     public long removeNames(long id, java.util.List<Long> list) {
-        return 0;
+        long res = 0;
+        Product p = idIndex.get(id);
+        if(p == null) {
+            return res;
+        }
+
+        for(Long n: list) {
+            if(p.description.remove(n)) {
+                res += n;
+            }
+        }
+        return res;
     }
 
     /**
@@ -143,32 +154,34 @@ public class MDS {
     public static class Product implements Comparable {
         final long id;  // making it final because ID should never be changed
         Money price;
-        LinkedList<Long> description;
+        HashSet<Long> description;
 
         /**
          * Constructor for Products
          *
          * @param id ID of the product. We are assuming that this will be unique.
          * @param price Money object containing the price
-         * @param description An array of long values, can be of arbitrary length
+         * @param desc An array of long values, can be of arbitrary length
          */
-        public Product(long id, Money price, LinkedList<Long> description) {
+        public Product(long id, Money price, LinkedList<Long> desc) {
             this.id = id;
             this.price = price;
-            this.description = (LinkedList<Long>) description.clone();
+            this.description = new HashSet<>();
+            description.addAll(desc);
         }
 
         /**
          * Update price and description of product
          * If description is null or list of length 0, don't update
          * @param price New price
-         * @param description New description
+         * @param desc New description
          */
-        public void updatePriceAndDescription(Money price, LinkedList<Long> description) {
+        public void updatePriceAndDescription(Money price, LinkedList<Long> desc) {
             this.price = price;
 
-            if(description != null && description.size() > 0) {
-                this.description = (LinkedList<Long>) description.clone();
+            if(desc != null && desc.size() > 0) {
+                this.description.clear();
+                this.description.addAll(desc);
             }
         }
 
