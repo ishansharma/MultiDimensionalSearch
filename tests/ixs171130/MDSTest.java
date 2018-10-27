@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MDSTest {
     private MDS store;
@@ -81,5 +81,80 @@ class MDSTest {
         store.insert(1, new MDS.Money(10, 50), l);
         removeList.add(125L);
         assertEquals(600L, store.removeNames(1, removeList));
+    }
+
+    @Test
+    void findMin() {
+        l.add(100L);
+        l.add(467L);
+        l.add(200L);
+
+        store.insert(1, new MDS.Money(10, 20), l);
+        store.insert(2, new MDS.Money(20, 10), l);
+        store.insert(3, new MDS.Money(12, 20), l);
+
+        assertEquals("10.20", store.findMinPrice(100).toString());
+        assertEquals("0.0", store.findMinPrice(213).toString());
+
+        // make sure additional/removal doesn't affect these operations
+        l.clear();
+        l.add(100L);
+        l.add(125L);
+
+        store.insert(4, new MDS.Money(5, 10), l);
+
+        l.add(130L);
+        store.insert(5, new MDS.Money(7, 10), l);
+
+        assertEquals("5.10", store.findMinPrice(100).toString());
+        assertEquals("5.10", store.findMinPrice(125).toString());
+        assertEquals("7.10", store.findMinPrice(130).toString());
+
+
+        store.delete(5);
+        assertEquals("0.0", store.findMinPrice(130).toString());
+
+        store.delete(4);
+        assertEquals("10.20", store.findMinPrice(100).toString());
+    }
+
+    @Test
+    void findMax() {
+        l.add(100L);
+        l.add(200L);
+        l.add(300L);
+
+        store.insert(1, new MDS.Money(10, 50), l);
+
+        l.add(400L);
+        store.insert(2, new MDS.Money(5, 49), l);
+
+        l.remove(200L);
+        store.insert(3, new MDS.Money(19, 99), l);
+
+        l.clear();
+        l.add(500L);
+        l.add(600L);
+        store.insert(4, new MDS.Money(29, 99), l);
+
+        l.add(700L);
+        store.insert(5, new MDS.Money(9, 29), l);
+
+        assertEquals("19.99", store.findMaxPrice(400).toString());
+        assertEquals("10.50", store.findMaxPrice(200).toString());
+
+        l.clear();
+        l.add(100L);
+        l.add(700L);
+        store.insert(6, new MDS.Money(99, 99), l);
+
+        assertEquals("99.99", store.findMaxPrice(100).toString());
+        assertEquals("99.99", store.findMaxPrice(700).toString());
+
+        store.delete(6);
+        assertEquals("19.99", store.findMaxPrice(100).toString());
+        assertEquals("9.29", store.findMaxPrice(700).toString());
+
+        assertEquals("0.0", store.findMaxPrice(1000).toString());
     }
 }

@@ -10,6 +10,7 @@ import java.util.*;
 public class MDS {
     private Map<Long, Product> idIndex;
     private DescriptionIndex descriptionIndex = new DescriptionIndex();
+    private Money zeroMoney = new Money();
 
     /**
      * Default constructor. Just initializes the indices
@@ -106,10 +107,16 @@ public class MDS {
     /**
      * Give a long int, find items whose description contains that number, return lowest price of those items
      * @param n ID to search for
-     * @return The minimum price of products
+     * @return The minimum price of products with given n in description
      */
     public Money findMinPrice(long n) {
-        return new Money();
+        Product p = descriptionIndex.findMin(n);
+
+        if (p == null) {
+            return zeroMoney;
+        }
+
+        return p.price;
     }
 
     /*
@@ -117,8 +124,21 @@ public class MDS {
        contains that number, and return highest price of those items.
        Return 0 if there is no such item.
     */
+
+    /**
+     * Given a long int, find items whose description contains that number, return highest price of those items
+     *
+     * @param n ID to search for
+     * @return The maximum price of products with given n in description
+     */
     public Money findMaxPrice(long n) {
-        return new Money();
+        Product p = descriptionIndex.findMax(n);
+
+        if (p == null) {
+            return zeroMoney;
+        }
+
+        return p.price;
     }
 
     /*
@@ -215,14 +235,9 @@ public class MDS {
      * Class to hold the description index
      */
     private static class DescriptionIndex {
-        private Map<Long, TreeSet<Product>> descriptionIndex;
-        private Comparator<Product> PriceComparator;
+        private Map<Long, TreeSet<Product>> descriptionIndex = new HashMap<>();
+        private Comparator<Product> PriceComparator = Comparator.comparing(o -> o.price);
         private TreeSet<Product> t;
-
-        public void DesciptionIndex() {
-            descriptionIndex = new HashMap<>();
-            PriceComparator = Comparator.comparing(o -> o.price);
-        }
 
         /**
          * Add a product with given description to our index
@@ -263,6 +278,36 @@ public class MDS {
             t = descriptionIndex.get(descriptionWord);
             if(t != null) {
                 t.remove(p);
+            }
+        }
+
+        /**
+         * Return Product with maximum price. May be null
+         *
+         * @param desc Word to search for in the index
+         * @return Product with maximum price. Null if the product doesn't exist
+         */
+        public Product findMax(Long desc) {
+            t = descriptionIndex.get(desc);
+            if (t == null || t.size() == 0) {
+                return null;
+            } else {
+                return t.last();
+            }
+        }
+
+        /**
+         * Return product with minimum price
+         *
+         * @param desc Word to search for in the index
+         * @return Product with minimum proce. Null if the product doesn't exist
+         */
+        public Product findMin(Long desc) {
+            t = descriptionIndex.get(desc);
+            if (t == null || t.size() == 0) {
+                return null;
+            } else {
+                return t.first();
             }
         }
     }
