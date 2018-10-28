@@ -207,4 +207,31 @@ class MDSTest {
         store.removeNames(2, l);
         assertEquals(2, store.findPriceRange(100, lower, upper));
     }
+
+    @Test
+    void priceHike() {
+        l.add(100L);
+        l.add(200L);
+        l.add(300L);
+
+        store.insert(1, new MDS.Money(10, 0), l);
+
+        l.add(400L);
+        store.insert(2, new MDS.Money(20, 0), l);
+
+        l.clear();
+        l.add(500L);
+        l.add(600L);
+        store.insert(3, new MDS.Money(30, 0), l);
+
+        assertEquals("6.0", store.priceHike(1L, 3L, 10.00).toString());
+        assertEquals("11.0", store.find(1).toString());
+        assertEquals("22.0", store.find(2).toString());
+        assertEquals("33.0", store.find(3).toString());
+
+        assertEquals("6.60", store.priceHike(1L, 2L, 20.00).toString());
+        assertEquals("13.20", store.find(1).toString());
+        assertEquals("26.40", store.find(2).toString());
+        assertEquals("33.0", store.find(3).toString());
+    }
 }

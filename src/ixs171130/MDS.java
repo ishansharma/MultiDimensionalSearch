@@ -8,15 +8,17 @@ import java.util.*;
  * Class for Multi-Dimensional Search
  */
 public class MDS {
-    private Map<Long, Product> idIndex;
-    private DescriptionIndex descriptionIndex = new DescriptionIndex();
-    private Money zeroMoney = new Money();
+    private TreeMap<Long, Product> idIndex;
+    private DescriptionIndex descriptionIndex;
+    private Money zeroMoney;
 
     /**
      * Default constructor. Just initializes the indices
      */
     public MDS() {
         idIndex = new TreeMap<>();
+        descriptionIndex = new DescriptionIndex();
+        zeroMoney = new Money();
     }
 
     /**
@@ -125,13 +127,31 @@ public class MDS {
         return descriptionIndex.findPriceRange(n, low, high);
     }
 
-    /*
-       g. PriceHike(l,h,r): increase the price of every product, whose id is
-       in the range [l,h] by r%.  Discard any fractional pennies in the new
-       prices of items.  Returns the sum of the net increases of the prices.
-    */
+    /**
+     * Increase price of every product with ID between l and h by r%
+     *
+     * @param l    Lowest ID
+     * @param h    Highest ID
+     * @param rate Percentage Increase
+     * @return Sum of total price hike
+     */
     public Money priceHike(long l, long h, double rate) {
-        return new Money();
+        NavigableMap<Long, Product> n = idIndex.subMap(l, true, h, true);
+
+        if (n == null || n.size() == 0) {
+            return new Money();
+        }
+
+        double totalIncrease = 0.0, originalPrice, newPrice;
+        for (Product p : n.values()) {
+            originalPrice = new Float(p.price.toString());
+            // TODO: See how to truncate properly
+            newPrice = originalPrice * (1 + (rate / 100));
+            p.price = new Money(String.format("%.2f", newPrice));
+            totalIncrease = totalIncrease + (newPrice - originalPrice);
+        }
+
+        return new Money(String.format("%.2f", totalIncrease));
     }
 
     /**
