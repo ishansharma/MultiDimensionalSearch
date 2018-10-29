@@ -23,14 +23,15 @@ public class MDS {
 
     /**
      * Insert a new item
-     * @param id ID of the item. If item with this id is not present, insert item. Else, replace the price and description.
+     *
+     * @param id    ID of the item. If item with this id is not present, insert item. Else, replace the price and description.
      * @param price Price for the object
-     * @param list Description - This is a list that needs to be case to LinkedList for internal use
+     * @param list  Description - This is a list that needs to be case to LinkedList for internal use
      * @return 1 if ID is new. 0 if ID is old and has been updated
      */
     public int insert(long id, Money price, java.util.List<Long> list) {
         Product p;
-        if(idIndex.containsKey(id)) {
+        if (idIndex.containsKey(id)) {
             p = idIndex.get(id);
             // TODO: Look for a more efficient approach here
             descriptionIndex.delete(p);
@@ -47,13 +48,14 @@ public class MDS {
 
     /**
      * Return price of item with given id. If not found, returns 0
+     *
      * @param id ID to search for
      * @return Money object which is either price of the object or 0
      */
     public Money find(long id) {
         Product p = idIndex.get(id);
 
-        if(p != null) {
+        if (p != null) {
             return p.price;
         }
 
@@ -63,13 +65,14 @@ public class MDS {
     /**
      * Delete item from storage. Returns the sum of long ints that are in the description of the deleted item.
      * Returns 0 if id doesn't exist
+     *
      * @param id ID of item to delete
      * @return Sum of long ints in the deleted item
      */
     public long delete(long id) {
         Product p = idIndex.get(id);
 
-        if(p == null) {
+        if (p == null) {
             return 0;
         }
 
@@ -86,6 +89,7 @@ public class MDS {
 
     /**
      * Give a long int, find items whose description contains that number, return lowest price of those items
+     *
      * @param n ID to search for
      * @return The minimum price of products with given n in description
      */
@@ -156,19 +160,20 @@ public class MDS {
 
     /**
      * Given an id and a list, remove the elements of list from product's description
-     * @param id ID of product
+     *
+     * @param id   ID of product
      * @param list List of longs to remove
      * @return Sum of longs removed
      */
     public long removeNames(long id, java.util.List<Long> list) {
         long res = 0;
         Product p = idIndex.get(id);
-        if(p == null) {
+        if (p == null) {
             return res;
         }
 
-        for(Long n: list) {
-            if(p.description.remove(n)) {
+        for (Long n : list) {
+            if (p.description.remove(n)) {
                 res += n;
                 descriptionIndex.deleteProductForAWord(p, n);
             }
@@ -211,9 +216,9 @@ public class MDS {
         /**
          * Constructor for Products
          *
-         * @param id ID of the product. We are assuming that this will be unique.
+         * @param id    ID of the product. We are assuming that this will be unique.
          * @param price Money object containing the price
-         * @param desc An array of long values, can be of arbitrary length
+         * @param desc  An array of long values, can be of arbitrary length
          */
         public Product(long id, Money price, List<Long> desc) {
             this.id = id;
@@ -225,13 +230,14 @@ public class MDS {
         /**
          * Update price and description of product
          * If description is null or list of length 0, don't update
+         *
          * @param price New price
-         * @param desc New description
+         * @param desc  New description
          */
         public void updatePriceAndDescription(Money price, List<Long> desc) {
             this.price = price;
 
-            if(desc != null && desc.size() > 0) {
+            if (desc != null && desc.size() > 0) {
                 this.description.clear();
                 this.description.addAll(desc);
             }
@@ -290,16 +296,16 @@ public class MDS {
 
         @Override
         public int compareTo(Money o) {
-            if(this.d == o.d) {
-                if(this.c == o.c) {
+            if (this.d == o.d) {
+                if (this.c == o.c) {
                     return 0;
-                } else if(this.c < o.c) {
+                } else if (this.c < o.c) {
                     return -1;
                 } else {
                     return 1;
                 }
             } else {
-                if(this.d > o.d) {
+                if (this.d > o.d) {
                     return 1;
                 } else {
                     return -1;
