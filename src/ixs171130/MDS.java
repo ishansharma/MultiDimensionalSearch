@@ -282,6 +282,9 @@ public class MDS {
                 c = 0;
             } else {
                 d = Long.parseLong(part[0]);
+                if (part[1].length() == 1)  {
+                    part[1] += '0';
+                }
                 c = Integer.parseInt(part[1]);
             }
         }
