@@ -143,6 +143,9 @@ public class MDS {
      * @return Sum of total price hike
      */
     public Money priceHike(long l, long h, double rate) {
+        if (l > h) {
+            return zeroMoney;
+        }
         NavigableMap<Long, Product> n = idIndex.subMap(l, true, h, true);
 
         if (n == null || n.size() == 0) {
