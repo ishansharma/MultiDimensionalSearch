@@ -128,6 +128,9 @@ public class MDS {
      * @return Number of products
      */
     public int findPriceRange(long n, Money low, Money high) {
+        if (low.compareTo(high) == 1) {
+            return 0;
+        }
         return descriptionIndex.findPriceRange(n, low, high);
     }
 
@@ -282,9 +285,6 @@ public class MDS {
                 c = 0;
             } else {
                 d = Long.parseLong(part[0]);
-                if (part[1].length() == 1)  {
-                    part[1] += '0';
-                }
                 c = Integer.parseInt(part[1]);
             }
         }
