@@ -189,18 +189,25 @@ public class MDS {
             return new Money();
         }
 
-        double totalIncrease = 0.0, originalPrice, newPrice;
+        long newPrice;
+        long totalIncrease = 0;
+        long originalPrice, newDollars;
+        int newCents;
+        long totalIncreaseDollars = 0;
         for (Product p : n.values()) {
-            originalPrice = new Float(p.price.toString());
+//            originalPrice = new Float(p.price.toString());
+            originalPrice = p.price.dollars() * 100 + p.price.cents();
             // TODO: See how to truncate properly
-            newPrice = originalPrice * (1 + (rate / 100));
+            newPrice = (long) (originalPrice * (1 + (rate / 100)));
+            newDollars = newPrice / 100;
+            newCents = (int) newPrice % 100;
             descriptionIndex.delete(p);
-            p.price = new Money(String.format("%.2f", newPrice));
+            p.price = new Money(newDollars, newCents);
             descriptionIndex.add(p);
             totalIncrease = totalIncrease + (newPrice - originalPrice);
         }
 
-        return new Money(String.format("%.2f", totalIncrease));
+        return new Money(String.format("%.2f", (double) totalIncrease / 100));
     }
 
     /**
