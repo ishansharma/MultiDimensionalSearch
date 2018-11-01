@@ -21,7 +21,7 @@ class DescriptionIndex {
         for (Long desc : p.description) {
             t = descriptionIndex.get(desc);
             if (t == null) {  // this we are seeing this description for the first time
-                t = new TreeMap<MDS.Money, HashSet<MDS.Product>>();
+                t = new TreeMap<>();
                 set = new HashSet<>();
                 set.add(p);
                 t.put(p.price, set);
@@ -83,9 +83,11 @@ class DescriptionIndex {
             t = descriptionIndex.get(desc);
             if (t != null) {
                 HashSet<MDS.Product> set = t.get(p.price);
-                set.remove(p);
-                if (set.isEmpty()) {
-                    t.remove(p.price);
+                if (set != null) {
+                    set.remove(p);
+                    if (set.isEmpty()) {
+                        t.remove(p.price);
+                    }
                 }
             }
             if (t.size() == 0) {
