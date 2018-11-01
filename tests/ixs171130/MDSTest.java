@@ -139,6 +139,7 @@ class MDSTest {
 
         store.delete(5);
         assertEquals("0.0", store.findMinPrice(130).toString());
+        System.out.println("Min price " + store.findMinPrice(100));
 
         store.delete(4);
         assertEquals("10.20", store.findMinPrice(100).toString());

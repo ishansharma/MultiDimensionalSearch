@@ -7,9 +7,9 @@ import java.util.*;
  */
 class DescriptionIndex {
 
-    private Map<Long, TreeSet<MDS.Product>> descriptionIndex = new HashMap<>();
-    private Comparator<MDS.Product> PriceComparator = Comparator.comparing(o -> o.price);
-    private TreeSet<MDS.Product> t;
+    //Map<description, Map<money, set<product>>>
+    private Map<Long, TreeMap<MDS.Money, HashSet<MDS.Product>>> descriptionIndex = new HashMap<>();
+    private TreeMap<MDS.Money, HashSet<MDS.Product>> t;
 
     /**
      * Add a product with given description to our index
@@ -17,14 +17,21 @@ class DescriptionIndex {
      * @param p Product to add to the index
      */
     public void add(MDS.Product p) {
+        HashSet<MDS.Product> set;
         for (Long desc : p.description) {
             t = descriptionIndex.get(desc);
             if (t == null) {  // this we are seeing this description for the first time
-                t = new TreeSet<>(PriceComparator);
-                t.add(p);
+                t = new TreeMap<MDS.Money, HashSet<MDS.Product>>();
+                set = new HashSet<>();
+                set.add(p);
+                t.put(p.price, set);
                 descriptionIndex.put(desc, t);
+
             } else {
-                t.add(p);
+                //TO DO : Optimize the way of adding
+                set = t.getOrDefault(p.price, new HashSet<>());
+                set.add(p);
+                t.put(p.price, set);
             }
         }
     }
@@ -37,21 +44,31 @@ class DescriptionIndex {
      * @param descriptionWord Word for which to add
      */
     public void addProductForAWord(MDS.Product p, Long descriptionWord) {
+        HashSet<MDS.Product> set;
         t = descriptionIndex.get(descriptionWord);
         if (t != null) {
-            t.add(p);
+//            t.add(p);
+            set = t.getOrDefault(p.price, new HashSet<>());
+            set.add(p);
+            t.put(p.price, set);
         }
         else {
-            t = new TreeSet<>(PriceComparator);
-            t.add(p);
+            t = new TreeMap<>();
+//            t.add(p);
+            set = new HashSet<>();
+            set.add(p);
+            t.put(p.price, set);
             descriptionIndex.put(descriptionWord, t);
         }
     }
 
     public boolean findProductForWord(MDS.Product p, Long descriptionWord) {
         t = descriptionIndex.get(descriptionWord);
-        if (t.contains(p)) {
-            return true;
+        HashSet<MDS.Product> set = t.get(p.price);
+        for (MDS.Product p1 : set) {
+            if (p1.id == p.id) {
+                return true;
+            }
         }
         return false;
     }
@@ -65,7 +82,11 @@ class DescriptionIndex {
         for (Long desc : p.description) {
             t = descriptionIndex.get(desc);
             if (t != null) {
-                t.remove(p);
+                HashSet<MDS.Product> set = t.get(p.price);
+                set.remove(p);
+                if (set.isEmpty()) {
+                    t.remove(p.price);
+                }
             }
         }
     }
@@ -79,7 +100,7 @@ class DescriptionIndex {
     public void deleteProductForAWord(MDS.Product p, Long descriptionWord) {
         t = descriptionIndex.get(descriptionWord);
         if (t != null) {
-            t.remove(p);
+            t.remove(p.price);
         }
     }
 
@@ -94,7 +115,14 @@ class DescriptionIndex {
         if (t == null || t.size() == 0) {
             return null;
         } else {
-            return t.last();
+//            return t.last();
+            HashSet<MDS.Product> set = t.lastEntry().getValue();
+            if (!set.isEmpty()) {
+                for (MDS.Product p : set) {
+                    return p;
+                }
+            }
+            return null;
         }
     }
 
@@ -109,7 +137,14 @@ class DescriptionIndex {
         if (t == null || t.size() == 0) {
             return null;
         } else {
-            return t.first();
+//            return t.first();
+            HashSet<MDS.Product> set = t.firstEntry().getValue();
+            if (!set.isEmpty()) {
+                for (MDS.Product p : set) {
+                    return p;
+                }
+            }
+            return null;
         }
     }
 
@@ -127,39 +162,45 @@ class DescriptionIndex {
             return 0;
         }
 
-        MDS.Product lowerProduct, upperProduct, lowerDummy, upperDummy;
+        MDS.Product lowerDummy, upperDummy, lProduct = null, uProduct = null;
         boolean lowerInclusive = false, upperInclusive = false;
-        lowerDummy = new MDS.Product(0, low);
-        upperDummy = new MDS.Product(0, high);
-        lowerProduct = t.floor(lowerDummy);
-        upperProduct = t.ceiling(upperDummy);
+
+        Map.Entry<MDS.Money, HashSet<MDS.Product>> lowerMoneyMap, upperMoneyMap;
+        lowerMoneyMap = t.lowerEntry(low);
+        upperMoneyMap = t.ceilingEntry(high);
 
         // if there's no product smaller than given product, it's the smallest!
-        if (lowerProduct == null) {
-            lowerProduct = t.first();
+        if (lowerMoneyMap == null) {
+            lowerMoneyMap = t.firstEntry();
             lowerInclusive = true;
         }
 
-        if (upperProduct == null) {
-            upperProduct = t.last();
+        if (upperMoneyMap == null) {
+            upperMoneyMap = t.lastEntry();
             upperInclusive = true;
         }
 
-        if (lowerDummy.price.equals(lowerProduct.price)) {
+
+        if (low.equals(lowerMoneyMap.getKey())) {
             lowerInclusive = true;
         }
 
-        if (upperDummy.price.equals(upperProduct.price)) {
+        if (high.equals(upperMoneyMap.getKey())) {
             upperInclusive = true;
         }
 
-        //
-        if (lowerProduct.equals(upperProduct)) {
-            return 1;
-        }
 
         // TODO: Remove the extra variable creation after testing
-        NavigableSet<MDS.Product> s = t.subSet(lowerProduct, lowerInclusive, upperProduct, upperInclusive);
-        return s.size();
+//        NavigableSet<MDS.Product> s = t.subSet(lowerProduct, lowerInclusive, upperProduct, upperInclusive);
+        NavigableMap<MDS.Money, HashSet<MDS.Product>> s =
+                t.subMap(lowerMoneyMap.getKey(), lowerInclusive, upperMoneyMap.getKey(), upperInclusive);
+//        return s.size();
+        HashSet<MDS.Product> set;
+        int size = 0;
+        for (MDS.Money m : s.keySet()) {
+            set = s.get(m);
+            size += set.size();
+        }
+        return size;
     }
 }

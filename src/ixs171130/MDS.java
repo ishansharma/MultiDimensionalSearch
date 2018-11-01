@@ -304,6 +304,16 @@ public class MDS {
             Product p = (Product) o;
             return Long.compare(this.id, p.id);
         }
+
+        @Override
+        public String toString() {
+            return "Product{" +
+                    "id=" + id +
+                    ", price=" + price +
+                    ", description=" + description +
+                    ", zeroMoney=" + zeroMoney +
+                    '}';
+        }
     }
 
     // Do not modify the Money class in a way that breaks LP3Driver.java
