@@ -194,7 +194,9 @@ public class MDS {
             originalPrice = new Float(p.price.toString());
             // TODO: See how to truncate properly
             newPrice = originalPrice * (1 + (rate / 100));
+            descriptionIndex.delete(p);
             p.price = new Money(String.format("%.2f", newPrice));
+            descriptionIndex.add(p);
             totalIncrease = totalIncrease + (newPrice - originalPrice);
         }
 

@@ -83,11 +83,9 @@ class DescriptionIndex {
             t = descriptionIndex.get(desc);
             if (t != null) {
                 HashSet<MDS.Product> set = t.get(p.price);
-                if (set != null) {
-                    set.remove(p);
-                    if (set.isEmpty()) {
-                        t.remove(p.price);
-                    }
+                set.remove(p);
+                if (set.isEmpty()) {
+                    t.remove(p.price);
                 }
             }
             if (t.size() == 0) {
@@ -109,11 +107,9 @@ class DescriptionIndex {
         t = descriptionIndex.get(descriptionWord);
         if (t != null) {
             HashSet<MDS.Product> set = t.get(p.price);
-            if (set != null) {
-                set.remove(p);
-                if (set.isEmpty()) {
-                    t.remove(p.price);
-                }
+            set.remove(p);
+            if (set.isEmpty()) {
+                t.remove(p.price);
             }
             descriptionIndex.put(descriptionWord, t);
         }
