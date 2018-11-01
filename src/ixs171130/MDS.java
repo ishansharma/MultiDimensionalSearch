@@ -248,7 +248,7 @@ public class MDS {
         final long id;  // making it final because ID should never be changed
         Money price;
         HashSet<Long> description;
-        Money zeroMoney = new Money(0, 0);
+        static final Money zeroMoney = new Money(0, 0);
 
         /**
          * Constructor with only ID
