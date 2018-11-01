@@ -118,7 +118,7 @@ public class MDS {
             sum += num;
         }
         descriptionIndex.delete(p);
-
+        idIndex.remove(id);
         return sum;
 
     }

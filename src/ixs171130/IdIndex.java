@@ -22,6 +22,11 @@ class IdIndex<K, V> {
         return this.index.put(id, p);
     }
 
+    public V remove(K id)
+    {
+        return this.index.remove(id);
+    }
+
     public NavigableMap<K, V> subMap(K l, boolean inclusiveLow, K h, boolean inclusiveHigh) {
         return this.index.subMap(l, inclusiveLow, h, inclusiveHigh);
     }

@@ -88,6 +88,12 @@ class DescriptionIndex {
                     t.remove(p.price);
                 }
             }
+            if (t.size() == 0) {
+                descriptionIndex.remove(desc);
+            }
+            else {
+                descriptionIndex.put(desc, t);
+            }
         }
     }
 
@@ -100,7 +106,12 @@ class DescriptionIndex {
     public void deleteProductForAWord(MDS.Product p, Long descriptionWord) {
         t = descriptionIndex.get(descriptionWord);
         if (t != null) {
-            t.remove(p.price);
+            HashSet<MDS.Product> set = t.get(p.price);
+            set.remove(p);
+            if (set.isEmpty()) {
+                t.remove(p.price);
+            }
+            descriptionIndex.put(descriptionWord, t);
         }
     }
 
