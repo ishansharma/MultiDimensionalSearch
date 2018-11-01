@@ -6,6 +6,7 @@ import java.util.*;
  * Class to hold the description index
  */
 class DescriptionIndex {
+
     private Map<Long, TreeSet<MDS.Product>> descriptionIndex = new HashMap<>();
     private Comparator<MDS.Product> PriceComparator = Comparator.comparing(o -> o.price);
     private TreeSet<MDS.Product> t;
@@ -26,6 +27,33 @@ class DescriptionIndex {
                 t.add(p);
             }
         }
+    }
+
+
+    /**
+     * Add the product from index for a specific word
+     *
+     * @param p               Product to add
+     * @param descriptionWord Word for which to add
+     */
+    public void addProductForAWord(MDS.Product p, Long descriptionWord) {
+        t = descriptionIndex.get(descriptionWord);
+        if (t != null) {
+            t.add(p);
+        }
+        else {
+            t = new TreeSet<>(PriceComparator);
+            t.add(p);
+            descriptionIndex.put(descriptionWord, t);
+        }
+    }
+
+    public boolean findProductForWord(MDS.Product p, Long descriptionWord) {
+        t = descriptionIndex.get(descriptionWord);
+        if (t.contains(p)) {
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -1,8 +1,8 @@
 package ixs171130;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NavigableMap;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.util.*;
 
 /**
  * Class for Multi-Dimensional Search
@@ -34,15 +34,47 @@ public class MDS {
         if (idIndex.containsKey(id)) {
             p = idIndex.get(id);
             // TODO: Look for a more efficient approach here
-            descriptionIndex.delete(p);
+
+            if (!price.equals(p.price)) {
+                descriptionIndex.delete(p);
+                p.updatePriceAndDescription(price, list);
+                descriptionIndex.add(p);
+                return 0;
+            }
+            /**
+             * Need to find the diff between prev and new and delete only diff and update only diff
+             */
+            diffBetweenOldAndNewDescription(p, p.description, list);
             p.updatePriceAndDescription(price, list);
-            descriptionIndex.add(p);
             return 0;
+
         } else {
             p = new Product(id, price, list);
             idIndex.put(id, p);
             descriptionIndex.add(p);
             return 1;
+        }
+    }
+
+    public void diffBetweenOldAndNewDescription(Product p, HashSet<Long> oldSet, List<Long> newList) {
+        List<Long> deleteList = new LinkedList<>();
+        List<Long> addList = new LinkedList<>();
+        for (Long in : newList) {
+            if (!oldSet.contains(in)) {
+                addList.add(in);
+            }
+            else {
+                oldSet.remove(in);
+            }
+        }
+        deleteList.addAll(oldSet);
+
+        for (Long desc: deleteList) {
+            descriptionIndex.deleteProductForAWord(p, desc);
+        }
+
+        for (Long desc : addList) {
+            descriptionIndex.addProductForAWord(p, desc);
         }
     }
 
@@ -60,6 +92,10 @@ public class MDS {
         }
 
         return new Money();
+    }
+
+    public Product findProduct(long id) {
+        return idIndex.get(id);
     }
 
     /**
@@ -187,6 +223,14 @@ public class MDS {
         return res;
     }
 
+    /**
+     * To check of particular product is in description Index
+     * Used for testing purposes
+     * @return
+     */
+    public boolean descriptionHasProduct(Product p, long desc) {
+        return descriptionIndex.findProductForWord(p, desc);
+    }
     /**
      * Class for products
      */
