@@ -87,3 +87,7 @@ hs_err_pid*
 
 # test files
 lp3_data_*.txt
+lp3-big-*.txt
+40*.txt
+41*.txt
+42*.txt
