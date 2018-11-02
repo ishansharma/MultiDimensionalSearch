@@ -201,9 +201,10 @@ public class MDS {
             newPrice = (long) (originalPrice * (1 + (rate / 100)));
             newDollars = newPrice / 100;
             newCents = (int) newPrice % 100;
-            descriptionIndex.delete(p);
+//            descriptionIndex.delete(p);
             p.price = new Money(newDollars, newCents);
-            descriptionIndex.add(p);
+
+//            descriptionIndex.add(p);
             totalIncrease = totalIncrease + (newPrice - originalPrice);
         }
 
@@ -238,9 +239,9 @@ public class MDS {
      * Used for testing purposes
      * @return
      */
-    public boolean descriptionHasProduct(Product p, long desc) {
-        return descriptionIndex.findProductForWord(p, desc);
-    }
+//    public boolean descriptionHasProduct(Product p, long desc) {
+//        return descriptionIndex.findProductForWord(p, desc);
+//    }
     /**
      * Class for products
      */
@@ -303,6 +304,7 @@ public class MDS {
             }
         }
 
+
         /**
          * For comparison, we compare by ID
          *
@@ -324,6 +326,8 @@ public class MDS {
                     ", zeroMoney=" + zeroMoney +
                     '}';
         }
+
+
     }
 
     // Do not modify the Money class in a way that breaks LP3Driver.java
@@ -389,8 +393,16 @@ public class MDS {
             return this.d == o.d && this.c == o.c;
         }
 
+        public boolean equals(Long o) {
+            return this.toLong() == o;
+        }
+
         public String toString() {
             return d + "." + c;
+        }
+
+        public Long toLong() {
+            return d * 100 + c;
         }
     }
 

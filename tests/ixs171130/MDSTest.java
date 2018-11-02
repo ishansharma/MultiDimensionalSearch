@@ -41,25 +41,25 @@ class MDSTest {
         assertEquals(0, store.insert(2, new MDS.Money(30, 20), l));
         assertEquals(new MDS.Money(30, 20), store.find(2));
         System.out.println("Input " + Arrays.toString(l.toArray()));
-        HashSet<Long> descs = store.findProduct(2).description;
-        for (long desc : l) {
-            assertEquals(true, descs.contains(desc));
-            assertEquals(true, store.descriptionHasProduct(p, desc));
-        }
-        System.out.println("Result : " +  Arrays.toString(descs.toArray()));
+//        HashSet<Long> descs = store.findProduct(2).description;
+//        for (long desc : l) {
+//            assertEquals(true, descs.contains(desc));
+//            assertEquals(true, store.descriptionHasProduct(p, desc));
+//        }
+//        System.out.println("Result : " +  Arrays.toString(descs.toArray()));
 
         l.remove(340L);
         l.add(350L);
         p = new MDS.Product(2, new MDS.Money(30, 20), l);
         assertEquals(0, store.insert(2, new MDS.Money(30, 20), l));
         assertEquals(new MDS.Money(30, 20), store.find(2));
-        System.out.println("Input " + Arrays.toString(l.toArray()));
-        descs = store.findProduct(2).description;
-        for (long desc : l) {
-            assertEquals(true, descs.contains(desc));
-            assertEquals(true, store.descriptionHasProduct(p, desc));
-        }
-        System.out.println("Result : " +  Arrays.toString(descs.toArray()));
+//        System.out.println("Input " + Arrays.toString(l.toArray()));
+//        descs = store.findProduct(2).description;
+//        for (long desc : l) {
+//            assertEquals(true, descs.contains(desc));
+//            assertEquals(true, store.descriptionHasProduct(p, desc));
+//        }
+//        System.out.println("Result : " +  Arrays.toString(descs.toArray()));
 
     }
 
