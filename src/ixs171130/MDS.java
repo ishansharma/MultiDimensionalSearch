@@ -195,19 +195,13 @@ public class MDS {
         int newCents;
         long totalIncreaseDollars = 0;
         for (Product p : n.values()) {
-//            originalPrice = new Float(p.price.toString());
             originalPrice = p.price.dollars() * 100 + p.price.cents();
-            // TODO: See how to truncate properly
             newPrice = (long) (originalPrice * (1 + (rate / 100)));
             newDollars = newPrice / 100;
             newCents = (int) newPrice % 100;
-//            descriptionIndex.delete(p);
             p.price = new Money(newDollars, newCents);
-
-//            descriptionIndex.add(p);
             totalIncrease = totalIncrease + (newPrice - originalPrice);
         }
-
         return new Money(String.format("%.2f", (double) totalIncrease / 100));
     }
 
@@ -234,14 +228,6 @@ public class MDS {
         return res;
     }
 
-    /**
-     * To check of particular product is in description Index
-     * Used for testing purposes
-     * @return
-     */
-//    public boolean descriptionHasProduct(Product p, long desc) {
-//        return descriptionIndex.findProductForWord(p, desc);
-//    }
     /**
      * Class for products
      */
