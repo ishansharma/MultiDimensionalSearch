@@ -14,6 +14,8 @@ public class MDS {
     private IdIndex<Long, Product> idIndex;
     private DescriptionIndex descriptionIndex;
     private Money zeroMoney;
+    // static variables for priceHike so we don't have to declare again and again
+    private static BigDecimal one = new BigDecimal(1), hundred = new BigDecimal(100);
 
     /**
      * Default constructor. Just initializes the indices
@@ -191,10 +193,8 @@ public class MDS {
             return zeroMoney;
         }
 
-        BigDecimal newPrice, oldPrice, rateIncrease, hundred, one, totalIncrease;
+        BigDecimal newPrice, oldPrice, rateIncrease, totalIncrease;
         rateIncrease = new BigDecimal(rate);
-        hundred = new BigDecimal(100);
-        one = new BigDecimal(1);
         totalIncrease = new BigDecimal(0);
 
         for (Product p : n.values()) {
