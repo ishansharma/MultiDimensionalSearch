@@ -1,5 +1,7 @@
 package ixs171130;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -189,19 +191,20 @@ public class MDS {
             return zeroMoney;
         }
 
-        long newPrice;
-        long totalIncrease = 0;
-        long originalPrice, newDollars;
-        int newCents;
+        BigDecimal newPrice, oldPrice, rateIncrease, hundred, one, totalIncrease;
+        rateIncrease = new BigDecimal(rate);
+        hundred = new BigDecimal(100);
+        one = new BigDecimal(1);
+        totalIncrease = new BigDecimal(0);
+
         for (Product p : n.values()) {
-            originalPrice = p.price.dollars() * 100 + p.price.cents();
-            newPrice = (long) (originalPrice * (1 + (rate / 100)));
-            newDollars = newPrice / 100;
-            newCents = (int) newPrice % 100;
-            p.price = new Money(newDollars, newCents);
-            totalIncrease = totalIncrease + (newPrice - originalPrice);
+            oldPrice = new BigDecimal(p.price.dollars() * 100 + p.price.cents()).divide(hundred).setScale(2, RoundingMode.DOWN);
+            newPrice = oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN);
+            p.price = new Money(newPrice.toString());
+            totalIncrease = totalIncrease.add(newPrice.subtract(oldPrice));
         }
-        return new Money(String.format("%.2f", (double) totalIncrease / 100));
+
+        return new Money(totalIncrease.toString());
     }
 
     /**
