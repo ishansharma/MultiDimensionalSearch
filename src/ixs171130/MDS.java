@@ -61,6 +61,14 @@ public class MDS {
         }
     }
 
+    /**
+     * Need to find the diff between prev description list and new description list
+     * Delete from description Index old products not in new
+     * Add in Description Index new products
+     * @param p Product
+     * @param oldSet old description set
+     * @param newList new description set
+     */
     public void diffBetweenOldAndNewDescription(Product p, HashSet<Long> oldSet, List<Long> newList) {
         List<Long> deleteList = new LinkedList<>();
         List<Long> addList = new LinkedList<>();

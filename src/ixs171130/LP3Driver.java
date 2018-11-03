@@ -79,6 +79,7 @@ public class LP3Driver {
                     result = mds.findPriceRange(in.nextLong(), new MDS.Money(in.next()), new MDS.Money(in.next()));
                     break;
                 case "PriceHike":
+
                     result = mds.priceHike(in.nextLong(), in.nextLong(), in.nextDouble()).dollars();
                     break;
                 case "RemoveNames":
