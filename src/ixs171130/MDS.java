@@ -212,7 +212,7 @@ public class MDS {
 
         for (Product p : n.values()) {
             // calculation: oldPrice = ((dollars * 100) + cents) / 100
-            // this stores old price in cents. setScale decides the precision, RoundingMode.DOWN makes sure we don't
+            // this stores old price. setScale decides the precision, RoundingMode.DOWN makes sure we don't
             // round and instead truncate after 2 decimal places
             oldPrice = new BigDecimal(p.price.dollars() * 100 + p.price.cents()).divide(hundred).setScale(2, RoundingMode.DOWN);
 
