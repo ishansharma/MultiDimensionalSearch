@@ -165,7 +165,7 @@ public class MDS {
      * @return Number of products
      */
     public int findPriceRange(long n, Money low, Money high) {
-        if (low.compareTo(high) == 1) {
+        if (low.compareTo(high) > 0) {
             return 0;
         }
         return descriptionIndex.findPriceRange(n, low, high);
@@ -180,20 +180,19 @@ public class MDS {
      * @return Sum of total price hike
      */
     public Money priceHike(long l, long h, double rate) {
-        if (l > h) {
+        if (l > h || Math.abs(rate) <= 0.001) {
             return zeroMoney;
         }
         NavigableMap<Long, Product> n = idIndex.subMap(l, true, h, true);
 
         if (n == null || n.size() == 0) {
-            return new Money();
+            return zeroMoney;
         }
 
         long newPrice;
         long totalIncrease = 0;
         long originalPrice, newDollars;
         int newCents;
-        long totalIncreaseDollars = 0;
         for (Product p : n.values()) {
             originalPrice = p.price.dollars() * 100 + p.price.cents();
             newPrice = (long) (originalPrice * (1 + (rate / 100)));
