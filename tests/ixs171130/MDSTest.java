@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -260,5 +259,8 @@ class MDSTest {
         assertEquals("13.20", store.find(1).toString());
         assertEquals("26.40", store.find(2).toString());
         assertEquals("33.0", store.find(3).toString());
+
+        assertEquals("6.93", store.priceHike(3L, 10L, 21).toString());
+        assertEquals("39.93", store.find(3).toString());
     }
 }
