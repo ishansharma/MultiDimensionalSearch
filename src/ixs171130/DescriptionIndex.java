@@ -1,6 +1,14 @@
+/*
+ * Authors:
+ * Ishan Sharma - ixs171130
+ * Ravikiran Kolanpaka - rxk171530
+ * Sharayu Mantri - ssm171330
+ */
 package ixs171130;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Class to hold the description index

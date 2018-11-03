@@ -1,3 +1,10 @@
+/*
+ * Authors:
+ * Ishan Sharma - ixs171130
+ * Ravikiran Kolanpaka - rxk171530
+ * Sharayu Mantri - ssm171330
+ */
+
 package ixs171130;
 
 import java.math.BigDecimal;
@@ -38,15 +45,13 @@ public class MDS {
         Product p;
         if (idIndex.containsKey(id)) {
             p = idIndex.get(id);
-            // TODO: Look for a more efficient approach here
-
             if (!price.equals(p.price)) {
                 descriptionIndex.delete(p);
                 p.updatePriceAndDescription(price, list);
                 descriptionIndex.add(p);
                 return 0;
             }
-            /**
+            /*
              * Need to find the diff between prev and new and delete only diff and update only diff
              */
             diffBetweenOldAndNewDescription(p, p.description, list);
@@ -75,8 +80,7 @@ public class MDS {
         for (Long in : newList) {
             if (!oldSet.contains(in)) {
                 addList.add(in);
-            }
-            else {
+            } else {
                 oldSet.remove(in);
             }
         }
@@ -201,14 +205,25 @@ public class MDS {
             return zeroMoney;
         }
 
+        // using BigDecimal because limited precision of Double/Float makes the results drift off sometimes
         BigDecimal newPrice, oldPrice, rateIncrease, totalIncrease;
         rateIncrease = new BigDecimal(rate);
         totalIncrease = new BigDecimal(0);
 
         for (Product p : n.values()) {
+            // calculation: oldPrice = ((dollars * 100) + cents) / 100
+            // this stores old price in cents. setScale decides the precision, RoundingMode.DOWN makes sure we don't
+            // round and instead truncate after 2 decimal places
             oldPrice = new BigDecimal(p.price.dollars() * 100 + p.price.cents()).divide(hundred).setScale(2, RoundingMode.DOWN);
+
+            // calculation: newPrice = oldPrice * ((rate / 100) + 1)
+            // e.g. if old price for $10.00 and we are doing a increase of 10%, new price = 10.00 * (10/100 + 1) = 11.00
             newPrice = oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN);
+
+            // we can directly use string constructor because out Bigdecimals are only storing 2 decimal digits
             p.price = new Money(newPrice.toString());
+
+            // calculation: totalIncrease + (newPrice - oldPrice)
             totalIncrease = totalIncrease.add(newPrice.subtract(oldPrice));
         }
 

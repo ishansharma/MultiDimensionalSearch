@@ -1,3 +1,9 @@
+/*
+ * Authors:
+ * Ishan Sharma - ixs171130
+ * Ravikiran Kolanpaka - rxk171530
+ * Sharayu Mantri - ssm171330
+ */
 package ixs171130;
 
 import java.util.NavigableMap;
@@ -22,8 +28,7 @@ class IdIndex<K, V> {
         return this.index.put(id, p);
     }
 
-    public V remove(K id)
-    {
+    public V remove(K id) {
         return this.index.remove(id);
     }
 
