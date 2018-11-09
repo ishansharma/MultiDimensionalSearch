@@ -22,7 +22,9 @@ public class MDS {
     private DescriptionIndex descriptionIndex;
     private Money zeroMoney;
     // static variables for priceHike so we don't have to declare again and again
-    private static BigDecimal one = new BigDecimal(1), hundred = new BigDecimal(100);
+    private static final BigDecimal zero = new BigDecimal(0), one = new BigDecimal(1), hundred = new BigDecimal(100);
+    private static final BigDecimal LONGMAX = new BigDecimal(Long.MAX_VALUE);
+    private static final BigDecimal LONGMIN = new BigDecimal(Long.MIN_VALUE);
 
     /**
      * Default constructor. Just initializes the indices
@@ -206,7 +208,7 @@ public class MDS {
         }
 
         // using BigDecimal because limited precision of Double/Float makes the results drift off sometimes
-        BigDecimal newPrice, oldPrice, rateIncrease, totalIncrease;
+        BigDecimal newPrice, oldPrice, rateIncrease, totalIncrease, diff;
         rateIncrease = new BigDecimal(rate);
         totalIncrease = new BigDecimal(0);
 
@@ -214,17 +216,30 @@ public class MDS {
             // calculation: oldPrice = ((dollars * 100) + cents) / 100
             // this stores old price. setScale decides the precision, RoundingMode.DOWN makes sure we don't
             // round and instead truncate after 2 decimal places
-            oldPrice = new BigDecimal(p.price.dollars() * 100 + p.price.cents()).divide(hundred).setScale(2, RoundingMode.DOWN);
+//            oldPrice = new BigDecimal(p.price.dollars() * 100 + p.price.cents()).divide(hundred).setScale(2, RoundingMode.DOWN);
+            oldPrice = new BigDecimal(p.price.dollars()).multiply(hundred).add(new BigDecimal(p.price.cents())).divide(hundred).setScale(2, RoundingMode.DOWN);
 
             // calculation: newPrice = oldPrice * ((rate / 100) + 1)
             // e.g. if old price for $10.00 and we are doing a increase of 10%, new price = 10.00 * (10/100 + 1) = 11.00
             newPrice = oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN);
+//            if(newPrice.compareTo(zero) < 0) {
+//                System.out.format("\n\nPrice less than 0 after hike. \nProduct: %s \noldPrice: %s, \nnewPrice: %s, \nrate: %.2f, \n%s", p.toString(), oldPrice.toString(), newPrice.toString(), rate, p.price.toString());
+//            }
+//
+//            if(newPrice.compareTo(LONGMAX) > 0) {
+//                System.out.format("\n\nPrice more than longmax after hike. \nProduct: %s \noldPrice: %s, \nnewPrice: %s, \nrate: %.2f, \n%s", p.toString(), oldPrice.toString(), newPrice.toString(), rate, p.price.toString());
+//            }
 
             // we can directly use string constructor because out Bigdecimals are only storing 2 decimal digits
             p.price = new Money(newPrice.toString());
 
             // calculation: totalIncrease + (newPrice - oldPrice)
             totalIncrease = totalIncrease.add(newPrice.subtract(oldPrice));
+        }
+
+        if (totalIncrease.compareTo(LONGMAX) > 0) {
+            diff = totalIncrease.subtract(LONGMAX).divideAndRemainder(LONGMAX)[1];
+            totalIncrease = LONGMIN.add(diff);
         }
 
         return new Money(totalIncrease.toString());
