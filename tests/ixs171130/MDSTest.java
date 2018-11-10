@@ -3,6 +3,7 @@ package ixs171130;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -262,5 +263,15 @@ class MDSTest {
 
         assertEquals("6.93", store.priceHike(3L, 10L, 21).toString());
         assertEquals("39.93", store.find(3).toString());
+    }
+
+    @Test
+    void longOverflow() {
+        BigDecimal longMax = new BigDecimal(Long.MAX_VALUE), longMin = new BigDecimal(Long.MIN_VALUE), zero = new BigDecimal(0), one = new BigDecimal(1);
+        assertEquals(Long.toString(1), store.emulateLongOverflow(one).toString());
+        assertEquals(Long.toString(Long.MAX_VALUE), store.emulateLongOverflow(longMax).toString());
+        assertEquals(Long.toString(Long.MAX_VALUE + 1), store.emulateLongOverflow(longMax.add(one)).toString());
+        assertEquals(Long.toString(Long.MAX_VALUE + 10), store.emulateLongOverflow(longMax.add(new BigDecimal(10))).toString());
+        assertEquals(Long.toString(Long.MAX_VALUE + Long.MAX_VALUE + Long.MAX_VALUE), store.emulateLongOverflow(new BigDecimal(Long.MAX_VALUE).add(new BigDecimal(Long.MAX_VALUE)).add(new BigDecimal(Long.MAX_VALUE))).toString());
     }
 }

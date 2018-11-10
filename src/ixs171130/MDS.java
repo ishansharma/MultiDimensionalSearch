@@ -221,7 +221,12 @@ public class MDS {
 
             // calculation: newPrice = oldPrice * ((rate / 100) + 1)
             // e.g. if old price for $10.00 and we are doing a increase of 10%, new price = 10.00 * (10/100 + 1) = 11.00
-            newPrice = oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN);
+            newPrice = emulateLongOverflow(oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN));
+//            if(oldPrice.compareTo(zero) >= 0) {
+//                newPrice = emulateLongOverflow(oldPrice.multiply(rateIncrease.divide(hundred).add(one)).setScale(2, RoundingMode.DOWN));
+//            } else {
+//                newPrice = emulateLongOverflow(oldPrice.multiply(one.subtract(rateIncrease.divide(hundred))).setScale(2, RoundingMode.DOWN));
+//            }
 //            if(newPrice.compareTo(zero) < 0) {
 //                System.out.format("\n\nPrice less than 0 after hike. \nProduct: %s \noldPrice: %s, \nnewPrice: %s, \nrate: %.2f, \n%s", p.toString(), oldPrice.toString(), newPrice.toString(), rate, p.price.toString());
 //            }
@@ -237,12 +242,22 @@ public class MDS {
             totalIncrease = totalIncrease.add(newPrice.subtract(oldPrice));
         }
 
-        if (totalIncrease.compareTo(LONGMAX) > 0) {
-            diff = totalIncrease.subtract(LONGMAX).divideAndRemainder(LONGMAX)[1];
-            totalIncrease = LONGMIN.add(diff);
+        return new Money(emulateLongOverflow(totalIncrease).toString());
+    }
+
+    /**
+     * Since we are working with Long datatype and Money class needs to be Long, emulate the behaviour of float
+     *
+     * @param num Number that may be bigger than Long.MAXVALUE
+     * @return BigDecimal value
+     */
+    public BigDecimal emulateLongOverflow(BigDecimal num) {
+        BigDecimal diff = num;
+        while (diff.compareTo(LONGMAX) > 0) {
+            diff = num.subtract(LONGMAX).add(LONGMIN.subtract(one));
         }
 
-        return new Money(totalIncrease.toString());
+        return diff;
     }
 
     /**
